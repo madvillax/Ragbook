@@ -1,0 +1,61 @@
+[project]
+name = "ragbook-api"
+version = "0.1.0"
+description = "Document ingestion and citation-grounded retrieval API for RAGBOOK"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+  "alembic>=1.16.5",
+  "asyncpg>=0.30.0",
+  "fastapi>=0.116.1",
+  "pgvector>=0.4.1",
+  "pydantic-settings>=2.10.1",
+  "pymupdf>=1.26.4",
+  "python-multipart>=0.0.20",
+  "sqlalchemy[asyncio]>=2.0.43",
+  "uvicorn[standard]>=0.35.0",
+]
+
+[project.optional-dependencies]
+ingestion = ["docling>=2.48.0"]
+rag = [
+  "llama-index-core>=0.13.3",
+  "llama-index-embeddings-openai>=0.5.0",
+  "llama-index-llms-openai>=0.5.0",
+]
+
+[dependency-groups]
+dev = [
+  "httpx>=0.28.1",
+  "pyright>=1.1.404",
+  "pytest>=8.4.1",
+  "pytest-asyncio>=1.1.0",
+  "ruff>=0.12.11",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["app"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ASYNC"]
+
+[tool.ruff.lint.per-file-ignores]
+"app/api/routes/*.py" = ["B008"]
+"alembic/versions/*.py" = ["E501"]
+
+[tool.pyright]
+pythonVersion = "3.12"
+typeCheckingMode = "standard"
+include = ["app", "tests"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
