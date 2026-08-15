@@ -10,7 +10,7 @@ RAGBOOK converts source documents into a structured, ebook-style reader and keep
 - FastAPI, Pydantic, async SQLAlchemy, Alembic, PostgreSQL full-text search, and pgvector-ready storage
 - PyMuPDF parsing for PDF and native text parsing for TXT and Markdown
 - Optional Docling adapters for DOCX and PPTX
-- A feature-flagged LlamaIndex pipeline for OpenAI embeddings, pgvector retrieval, LLM reranking, grounded generation, and stable source citations
+- A feature-flagged LlamaIndex pipeline for Gemini embeddings, pgvector retrieval, LLM reranking, grounded generation, and stable source citations
 - Ruff, Pyright, Oxc oxlint, TypeScript, and pytest tooling
 
 ## Start the web app
@@ -32,14 +32,14 @@ uv run alembic upgrade head
 uv run uvicorn app.main:app --reload
 ```
 
-For DOCX, PPTX, LlamaIndex, and OpenAI adapters:
+For DOCX, PPTX, LlamaIndex, and Gemini adapters:
 
 ```bash
 uv sync --dev --extra ingestion --extra rag
 ```
 
 Copy `.env.example` to `.env` and set `VITE_API_URL=http://localhost:8000` to connect the frontend to the API.
-Set `RAGBOOK_RAG_MODE=hybrid`, provide `OPENAI_API_KEY`, and install the `rag` extra to enable the full embedding, reranking, and LLM path. The default `fts` mode remains deterministic and requires no external AI provider.
+Set `RAG_MODE=hybrid`, provide `GEMINI_API_KEY`, and install the `rag` extra to enable the full embedding, reranking, and LLM path. The default `fts` mode remains deterministic and requires no external AI provider.
 
 ## Architecture
 

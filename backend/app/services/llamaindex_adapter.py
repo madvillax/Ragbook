@@ -10,11 +10,11 @@ class AIAdapterConfigurationError(RuntimeError):
 
 
 def _api_key() -> str:
-    if settings.openai_api_key is None:
+    if settings.gemini_api_key is None:
         raise AIAdapterConfigurationError(
-            "Hybrid RAG requires OPENAI_API_KEY and the backend rag extra."
+            "Hybrid RAG requires GEMINI_API_KEY and the backend rag extra."
         )
-    return settings.openai_api_key.get_secret_value()
+    return settings.gemini_api_key.get_secret_value()
 
 
 def _load(name: str, attribute: str) -> Any:
@@ -27,12 +27,19 @@ def _load(name: str, attribute: str) -> Any:
 
 
 def _embedding_client() -> Any:
-    embedding_class = _load("llama_index.embeddings.openai", "OpenAIEmbedding")
-    return embedding_class(model=settings.embedding_model, api_key=_api_key())
+    embedding_class = _load("llama_index.embeddings.google_genai", "GoogleGenAIEmbedding")
+    embedding_config = _load("google.genai.types", "EmbedContentConfig")
+    return embedding_class(
+        model_name=settings.embedding_model,
+        api_key=_api_key(),
+        embedding_config=embedding_config(
+            output_dimensionality=settings.embedding_dimensions,
+        ),
+    )
 
 
 def _llm_client() -> Any:
-    llm_class = _load("llama_index.llms.openai", "OpenAI")
+    llm_class = _load("llama_index.llms.google_genai", "GoogleGenAI")
     return llm_class(model=settings.llm_model, api_key=_api_key(), temperature=0)
 
 
@@ -56,12 +63,15 @@ async def rerank_passages(
         node_with_score(node=text_node(text=text, metadata={"candidate_index": index}), score=score)
         for index, (text, score) in enumerate(passages)
     ]
-    reranker = llm_rerank(
-        choice_batch_size=min(10, max(1, len(nodes))),
-        top_n=top_n,
-        llm=_llm_client(),
-    )
-    ranked = await asyncio.to_thread(reranker.postprocess_nodes, nodes, query_str=question)
+    def rerank() -> list[Any]:
+        reranker = llm_rerank(
+            choice_batch_size=min(10, max(1, len(nodes))),
+            top_n=top_n,
+            llm=_llm_client(),
+        )
+        return reranker.postprocess_nodes(nodes, query_str=question)
+
+    ranked = await asyncio.to_thread(rerank)
     return [int(item.node.metadata["candidate_index"]) for item in ranked]
 
 
@@ -80,5 +90,8 @@ SOURCE PASSAGES:
 {numbered_evidence}
 
 ANSWER:"""
-    response = await asyncio.to_thread(_llm_client().complete, prompt)
+    def complete() -> Any:
+        return _llm_client().complete(prompt)
+
+    response = await asyncio.to_thread(complete)
     return str(response).strip()

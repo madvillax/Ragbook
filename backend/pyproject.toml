@@ -20,8 +20,8 @@ dependencies = [
 ingestion = ["docling>=2.48.0"]
 rag = [
   "llama-index-core>=0.13.3",
-  "llama-index-embeddings-openai>=0.5.0",
-  "llama-index-llms-openai>=0.5.0",
+  "llama-index-embeddings-google-genai>=0.5.1",
+  "llama-index-llms-google-genai>=0.9.6",
 ]
 
 [dependency-groups]

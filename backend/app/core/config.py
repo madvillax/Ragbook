@@ -7,7 +7,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_prefix="RAGBOOK_", extra="ignore")
+    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     app_name: str = "RAGBOOK API"
     environment: str = "development"
@@ -18,9 +18,9 @@ class Settings(BaseSettings):
     cors_origins: list[str] = Field(default_factory=lambda: ["http://localhost:5173"])
     embedding_dimensions: int = 1536
     rag_mode: Literal["fts", "hybrid"] = "fts"
-    openai_api_key: SecretStr | None = Field(default=None, validation_alias="OPENAI_API_KEY")
-    embedding_model: str = "text-embedding-3-small"
-    llm_model: str = "gpt-5-mini"
+    gemini_api_key: SecretStr | None = Field(default=None, validation_alias="GEMINI_API_KEY")
+    embedding_model: str = "gemini-embedding-001"
+    llm_model: str = "gemini-2.5-flash"
 
 
 @lru_cache
