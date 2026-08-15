@@ -1,14 +1,18 @@
+name: ragbook
+
 services:
   postgres:
     image: pgvector/pgvector:pg17
+    container_name: ragbook-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_DB: ragbook
       POSTGRES_USER: ragbook
       POSTGRES_PASSWORD: ragbook
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
-      - ragbook-postgres:/var/lib/postgresql/data
+      - ragbook-postgres-data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ragbook -d ragbook"]
       interval: 5s
@@ -16,5 +20,5 @@ services:
       retries: 10
 
 volumes:
-  ragbook-postgres:
-
+  ragbook-postgres-data:
+    name: ragbook-postgres-data
