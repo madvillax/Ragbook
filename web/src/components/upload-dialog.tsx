@@ -7,7 +7,7 @@ import { uploadDocument } from "../lib/api";
 import { useAppStore } from "../store/app-store";
 import { Button } from "./ui/button";
 
-const ACCEPTED = ".pdf,.docx,.pptx,.txt,.md,.epub";
+const ACCEPTED = ".pdf,.docx,.pptx,.txt,.md,.markdown";
 
 export function UploadDialog() {
   const open = useAppStore((state) => state.isUploadOpen);
@@ -25,9 +25,21 @@ export function UploadDialog() {
       window.setTimeout(() => {
         setOpen(false);
         setFile(null);
+        mutation.reset();
+        if (inputRef.current) inputRef.current.value = "";
       }, 350);
     },
   });
+
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen);
+    if (!nextOpen && !mutation.isPending) {
+      setFile(null);
+      setError(null);
+      mutation.reset();
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  }
 
   function chooseFile(nextFile?: File) {
     if (!nextFile) return;
@@ -40,7 +52,7 @@ export function UploadDialog() {
   }
 
   return (
-    <Dialog.Root open={open} onOpenChange={setOpen}>
+    <Dialog.Root open={open} onOpenChange={handleOpenChange}>
       <Dialog.Portal>
         <Dialog.Backdrop className="fixed inset-0 z-40 bg-[#151820]/35 backdrop-blur-[3px] transition-opacity duration-200 data-[ending-style]:opacity-0 data-[starting-style]:opacity-0" />
         <Dialog.Popup
@@ -74,7 +86,7 @@ export function UploadDialog() {
             </span>
             <span className="mt-4 text-sm font-semibold">{file ? file.name : "Drop a document here"}</span>
             <span className="mt-1.5 text-xs leading-5 text-[var(--text-tertiary)]">
-              {file ? `${(file.size / 1024 / 1024).toFixed(1)} MB ready to upload` : "PDF, DOCX, PPTX, TXT, Markdown, or EPUB up to 100 MB"}
+              {file ? `${(file.size / 1024 / 1024).toFixed(1)} MB ready to upload` : "PDF, DOCX, PPTX, TXT, or Markdown up to 100 MB"}
             </span>
           </motion.button>
           <input ref={inputRef} type="file" accept={ACCEPTED} className="sr-only" onChange={(event) => chooseFile(event.target.files?.[0])} />

@@ -1,14 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { BookOpen, ClockCounterClockwise, GearSix, Plus, Sparkle } from "@phosphor-icons/react";
+import { BookOpen, Plus } from "@phosphor-icons/react";
 import { Brand } from "./brand";
 import { useAppStore } from "../store/app-store";
 import { cn } from "../lib/cn";
-
-const navItems = [
-  { label: "Library", icon: BookOpen, to: "/" },
-  { label: "Recent", icon: ClockCounterClockwise, to: "/" },
-  { label: "Highlights", icon: Sparkle, to: "/" },
-] as const;
 
 export function AppSidebar() {
   const setUploadOpen = useAppStore((state) => state.setUploadOpen);
@@ -26,38 +20,22 @@ export function AppSidebar() {
       </button>
 
       <nav aria-label="Main navigation" className="mt-6 space-y-1">
-        {navItems.map((item, index) => {
-          const active = index === 0 && pathname === "/";
-          return (
-            <Link
-              key={item.label}
-              to={item.to}
-              className={cn(
-                "flex h-10 items-center gap-3 rounded-xl px-3 text-sm transition-colors",
-                active
-                  ? "bg-[var(--surface-muted)] font-medium text-[var(--text-primary)]"
-                  : "text-[var(--text-secondary)] hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)]",
-              )}
-            >
-              <item.icon size={18} weight={active ? "fill" : "regular"} />
-              {item.label}
-            </Link>
-          );
-        })}
+        <Link
+          to="/"
+          className={cn(
+            "flex h-10 items-center gap-3 rounded-xl px-3 text-sm transition-colors",
+            pathname === "/"
+              ? "bg-[var(--surface-muted)] font-medium text-[var(--text-primary)]"
+              : "text-[var(--text-secondary)] hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)]",
+          )}
+        >
+          <BookOpen size={18} weight={pathname === "/" ? "fill" : "regular"} />
+          Library
+        </Link>
       </nav>
 
-      <div className="mt-auto">
-        <button className="flex h-10 w-full items-center gap-3 rounded-xl px-3 text-sm text-[var(--text-secondary)] hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)]">
-          <GearSix size={18} />
-          Settings
-        </button>
-        <div className="mt-3 flex items-center gap-3 border-t border-[var(--line)] px-2 pt-4">
-          <div className="grid size-8 place-items-center rounded-xl bg-[#2d3440] text-xs font-semibold text-white dark:bg-[#202020]">MS</div>
-          <div className="min-w-0">
-            <p className="truncate text-sm font-medium">Mohit Sharma</p>
-            <p className="truncate text-xs text-[var(--text-tertiary)]">Personal library</p>
-          </div>
-        </div>
+      <div className="mt-auto border-t border-[var(--line)] px-2 pt-4">
+        <p className="text-xs leading-5 text-[var(--text-tertiary)]">Your uploaded documents appear here after processing.</p>
       </div>
     </aside>
   );

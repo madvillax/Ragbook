@@ -1,19 +1,21 @@
 import { CaretRight, X } from "@phosphor-icons/react";
-import { sections } from "../../lib/mock-data";
+import type { DocumentSection } from "../../lib/types";
 import { cn } from "../../lib/cn";
 import { useAppStore } from "../../store/app-store";
 
-export function OutlinePanel() {
+interface OutlinePanelProps {
+  sections: DocumentSection[];
+  pageCount: number;
+}
+
+export function OutlinePanel({ sections, pageCount }: OutlinePanelProps) {
   const open = useAppStore((state) => state.isOutlineOpen);
   const toggle = useAppStore((state) => state.toggleOutline);
 
   if (!open) return null;
 
   function jumpTo(sectionId: string) {
-    const normalized = ["reliability", "hardware-faults"].includes(sectionId)
-      ? sectionId
-      : "thinking-data-systems";
-    document.getElementById(normalized)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById(`document-section-${sectionId}`)?.scrollIntoView({ behavior: "smooth", block: "start" });
     if (window.innerWidth < 1024) toggle();
   }
 
@@ -26,31 +28,27 @@ export function OutlinePanel() {
         </button>
       </div>
       <nav className="flex-1 overflow-y-auto px-2 pb-5" aria-label="Document outline">
-        {sections.map((section) => (
+        {sections.length > 0 ? sections.map((section) => (
           <button
             key={section.id}
             onClick={() => jumpTo(section.id)}
             className={cn(
               "group flex w-full items-start gap-1.5 rounded-xl py-2 pr-2 text-left text-[12px] leading-[1.35] text-[var(--text-secondary)] hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)]",
-              section.level === 1 && "pl-2 font-semibold text-[var(--text-primary)]",
+              section.level <= 1 && "pl-2 font-semibold text-[var(--text-primary)]",
               section.level === 2 && "pl-4",
-              section.level === 3 && "pl-7 text-[11px]",
-              section.id === "reliability" && "bg-accent-50 text-accent-700 dark:bg-black dark:text-white dark:ring-1 dark:ring-white/10",
+              section.level >= 3 && "pl-7 text-[11px]",
             )}
           >
             <CaretRight size={12} className={cn("mt-0.5 shrink-0 opacity-0", section.level < 3 && "opacity-60")} />
             <span className="flex-1">{section.title}</span>
-            <span className="shrink-0 text-[10px] tabular-nums text-[var(--text-tertiary)]">{section.page}</span>
+            <span className="shrink-0 text-[10px] tabular-nums text-[var(--text-tertiary)]">{section.pageStart}</span>
           </button>
-        ))}
+        )) : (
+          <p className="px-3 py-4 text-xs leading-5 text-[var(--text-tertiary)]">No document outline was detected.</p>
+        )}
       </nav>
-      <div className="border-t border-[var(--line)] p-4">
-        <div className="flex items-center justify-between text-[11px] text-[var(--text-tertiary)]">
-          <span>Reading progress</span><span>42%</span>
-        </div>
-        <div className="mt-2 h-1 overflow-hidden rounded-full bg-[var(--surface-muted)]">
-          <div className="h-full w-[42%] rounded-full bg-accent-500" />
-        </div>
+      <div className="border-t border-[var(--line)] p-4 text-[11px] text-[var(--text-tertiary)]">
+        {sections.length} {sections.length === 1 ? "section" : "sections"}{pageCount > 0 ? ` · ${pageCount} ${pageCount === 1 ? "page" : "pages"}` : ""}
       </div>
     </aside>
   );

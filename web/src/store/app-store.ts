@@ -21,7 +21,7 @@ export const useAppStore = create<AppState>()(
     (set) => ({
       isUploadOpen: false,
       query: "",
-      activeCategory: "All books",
+      activeCategory: "All documents",
       readerFontScale: 1,
       isOutlineOpen: true,
       isAssistantOpen: true,
@@ -42,4 +42,3 @@ export const useAppStore = create<AppState>()(
     },
   ),
 );
-

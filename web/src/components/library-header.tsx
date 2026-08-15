@@ -25,7 +25,6 @@ export function LibraryHeader() {
         <Plus size={16} weight="bold" />
         <span className="hidden sm:inline">Add</span>
       </Button>
-      <button aria-label="Open account menu" className="ml-3 hidden size-9 place-items-center rounded-xl bg-[#2d3440] text-xs font-semibold text-white sm:grid dark:bg-[#202020] lg:hidden">MS</button>
     </header>
   );
 }

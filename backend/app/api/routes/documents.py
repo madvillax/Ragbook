@@ -20,7 +20,7 @@ from app.schemas.document import (
 from app.services.ingestion import process_document
 
 router = APIRouter(prefix="/documents", tags=["documents"])
-ALLOWED_SUFFIXES = {".pdf", ".docx", ".pptx", ".txt", ".md", ".markdown", ".epub"}
+ALLOWED_SUFFIXES = {".pdf", ".docx", ".pptx", ".txt", ".md", ".markdown"}
 
 
 def clean_title(filename: str) -> str:
@@ -44,14 +44,21 @@ async def get_document(
     document = await session.scalar(statement)
     if document is None:
         raise HTTPException(status_code=404, detail="Document not found.")
+    document_status = (
+        "processing"
+        if document.status.value in {"uploaded", "processing"}
+        else document.status.value
+    )
     return DocumentDetail(
         id=document.id,
         title=document.title,
         author=document.author,
         format=document.format,
-        status=document.status.value,
+        status=document_status,
+        progress=round(document.progress),
         page_count=document.page_count,
         created_at=document.created_at,
+        error_message=document.error_message,
         sections=[
             SectionResponse(
                 id=section.id,

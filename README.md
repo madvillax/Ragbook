@@ -20,7 +20,7 @@ pnpm install
 pnpm dev
 ```
 
-The frontend uses high-fidelity sample documents when `VITE_API_URL` is not set. This keeps product development independent from local infrastructure.
+The frontend connects to `http://localhost:8000` by default and displays only documents returned by the RAGBOOK API. Set `VITE_API_URL` when the backend is hosted elsewhere.
 
 ## Start the API
 

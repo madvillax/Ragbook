@@ -4,7 +4,7 @@ import { Brand } from "../brand";
 import { useAppStore } from "../../store/app-store";
 import { Button } from "../ui/button";
 
-export function ReaderToolbar({ title }: { title: string }) {
+export function ReaderToolbar({ title, subtitle }: { title: string; subtitle: string }) {
   const fontScale = useAppStore((state) => state.readerFontScale);
   const setFontScale = useAppStore((state) => state.setReaderFontScale);
   const toggleOutline = useAppStore((state) => state.toggleOutline);
@@ -26,7 +26,7 @@ export function ReaderToolbar({ title }: { title: string }) {
         </button>
         <div className="ml-1 min-w-0 border-l border-[var(--line)] pl-3">
           <p className="truncate text-[13px] font-medium sm:max-w-72">{title}</p>
-          <p className="hidden text-[10px] text-[var(--text-tertiary)] sm:block">Chapter 1 of 12</p>
+          <p className="hidden text-[10px] text-[var(--text-tertiary)] sm:block">{subtitle}</p>
         </div>
       </div>
 

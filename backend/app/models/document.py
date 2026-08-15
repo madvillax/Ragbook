@@ -3,7 +3,7 @@ from typing import Any
 from uuid import UUID
 
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import Enum, Float, ForeignKey, Index, Integer, String, Text
+from sqlalchemy import Computed, Enum, Float, ForeignKey, Index, Integer, String, Text
 from sqlalchemy.dialects.postgresql import JSONB, TSVECTOR
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -88,6 +88,9 @@ class Chunk(Base, UUIDTimestampMixin):
     token_count: Mapped[int] = mapped_column(Integer, default=0)
     source_location: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)
     embedding: Mapped[list[float] | None] = mapped_column(Vector(1536))
-    search_vector: Mapped[str | None] = mapped_column(TSVECTOR)
+    search_vector: Mapped[str | None] = mapped_column(
+        TSVECTOR,
+        Computed("to_tsvector('english', text)", persisted=True),
+    )
 
     document: Mapped[Document] = relationship(back_populates="chunks")

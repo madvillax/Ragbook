@@ -15,10 +15,11 @@ class DocumentSummary(BaseModel):
     format: str
     progress: int
     status: str
-    last_opened: str = Field(serialization_alias="lastOpened")
+    updated_at: datetime = Field(serialization_alias="updatedAt")
     page_count: int = Field(serialization_alias="pageCount")
     cover: str
     category: str
+    error_message: str | None = Field(serialization_alias="errorMessage")
 
     @classmethod
     def from_document(cls, document: Document) -> "DocumentSummary":
@@ -34,12 +35,11 @@ class DocumentSummary(BaseModel):
             format=document.format,
             progress=round(document.progress),
             status=status,
-            last_opened=document.updated_at.strftime("%b %d")
-            if document.updated_at
-            else "Just added",
+            updated_at=document.updated_at,
             page_count=document.page_count,
             cover=(document.metadata_json or {}).get("cover", "cobalt"),
             category=document.category,
+            error_message=document.error_message,
         )
 
 
@@ -65,6 +65,8 @@ class DocumentDetail(BaseModel):
     author: str
     format: str
     status: str
+    progress: int
     page_count: int
     created_at: datetime
+    error_message: str | None
     sections: list[SectionResponse]

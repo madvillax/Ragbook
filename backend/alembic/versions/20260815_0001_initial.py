@@ -17,7 +17,6 @@ depends_on: str | Sequence[str] | None = None
 def upgrade() -> None:
     op.execute("CREATE EXTENSION IF NOT EXISTS vector")
     document_status = sa.Enum("UPLOADED", "PROCESSING", "READY", "FAILED", name="document_status")
-    document_status.create(op.get_bind())
     op.create_table(
         "documents",
         sa.Column("title", sa.String(length=500), nullable=False),
