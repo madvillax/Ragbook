@@ -1,0 +1,95 @@
+import type { Book, Citation, Section } from "./types";
+
+export const books: Book[] = [
+  {
+    id: "designing-data-intensive-applications",
+    title: "Designing Data-Intensive Applications",
+    author: "Martin Kleppmann",
+    format: "PDF",
+    progress: 42,
+    status: "ready",
+    lastOpened: "Today",
+    pageCount: 616,
+    cover: "cobalt",
+    category: "Engineering",
+  },
+  {
+    id: "attention-is-all-you-need",
+    title: "Attention Is All You Need",
+    author: "Vaswani et al.",
+    format: "PDF",
+    progress: 68,
+    status: "ready",
+    lastOpened: "Yesterday",
+    pageCount: 15,
+    cover: "red",
+    category: "Research",
+  },
+  {
+    id: "building-reliable-systems",
+    title: "Building Reliable Systems",
+    author: "Internal engineering notes",
+    format: "DOCX",
+    progress: 16,
+    status: "ready",
+    lastOpened: "Aug 12",
+    pageCount: 184,
+    cover: "forest",
+    category: "Engineering",
+  },
+  {
+    id: "quarterly-product-review",
+    title: "Quarterly Product Review",
+    author: "Product team",
+    format: "PPTX",
+    progress: 0,
+    status: "processing",
+    lastOpened: "Just added",
+    pageCount: 48,
+    cover: "plum",
+    category: "Work",
+  },
+  {
+    id: "deep-work-notes",
+    title: "Deep Work Notes",
+    author: "Personal notes",
+    format: "MD",
+    progress: 91,
+    status: "ready",
+    lastOpened: "Aug 8",
+    pageCount: 32,
+    cover: "graphite",
+    category: "Notes",
+  },
+];
+
+export const sections: Section[] = [
+  { id: "reliable-scalable", title: "Reliable, Scalable, and Maintainable", level: 1, page: 3 },
+  { id: "thinking-data-systems", title: "Thinking About Data Systems", level: 2, page: 4 },
+  { id: "reliability", title: "Reliability", level: 2, page: 6 },
+  { id: "hardware-faults", title: "Hardware Faults", level: 3, page: 7 },
+  { id: "software-errors", title: "Software Errors", level: 3, page: 9 },
+  { id: "human-errors", title: "Human Errors", level: 3, page: 12 },
+  { id: "scalability", title: "Scalability", level: 2, page: 14 },
+  { id: "describing-load", title: "Describing Load", level: 3, page: 15 },
+  { id: "performance", title: "Describing Performance", level: 3, page: 17 },
+  { id: "maintainability", title: "Maintainability", level: 2, page: 20 },
+];
+
+export const citations: Citation[] = [
+  {
+    id: "citation-reliability",
+    label: "Reliability",
+    sectionId: "reliability-passage",
+    page: 6,
+    excerpt: "The system should continue to work correctly even when things go wrong.",
+  },
+  {
+    id: "citation-faults",
+    label: "Faults and failures",
+    sectionId: "faults-passage",
+    page: 7,
+    excerpt: "A fault is one component deviating from its specification, while a failure is when the system stops providing the required service.",
+  },
+];
+

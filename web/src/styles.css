@@ -1,0 +1,168 @@
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/source-serif-4";
+
+@theme {
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-reader: "Source Serif 4 Variable", ui-serif, Georgia, serif;
+  --color-accent-50: #eef4ff;
+  --color-accent-100: #dbe7ff;
+  --color-accent-500: #2f6feb;
+  --color-accent-600: #245bc3;
+  --color-accent-700: #1f4fa7;
+  --radius-panel: 1rem;
+  --shadow-panel: 0 20px 60px rgba(37, 48, 73, 0.10), 0 2px 12px rgba(37, 48, 73, 0.06);
+}
+
+:root {
+  color-scheme: light;
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --app-bg: #f4f5f7;
+  --surface: #fbfbfc;
+  --surface-raised: #ffffff;
+  --surface-muted: #eceef2;
+  --text-primary: #1d2027;
+  --text-secondary: #666b76;
+  --text-tertiary: #8d929d;
+  --line: rgba(48, 53, 64, 0.11);
+  --glass: rgba(250, 251, 252, 0.78);
+  --selection: rgba(47, 111, 235, 0.17);
+  --focus-ring: #2f6feb;
+  --accent-shadow: 0 7px 20px rgba(36, 91, 195, 0.22);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --color-accent-50: #111111;
+    --color-accent-100: #f4f4f5;
+    --color-accent-500: #000000;
+    --color-accent-600: #000000;
+    --color-accent-700: #080808;
+    --app-bg: #000000;
+    --surface: #050505;
+    --surface-raised: #0a0a0a;
+    --surface-muted: #171717;
+    --text-primary: #f3f4f6;
+    --text-secondary: #afb3bc;
+    --text-tertiary: #858a95;
+    --line: rgba(236, 238, 243, 0.10);
+    --glass: rgba(0, 0, 0, 0.82);
+    --selection: rgba(255, 255, 255, 0.20);
+    --focus-ring: #f4f4f5;
+    --accent-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), 0 8px 24px rgba(0, 0, 0, 0.55);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--app-bg);
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100dvh;
+  background: var(--app-bg);
+  color: var(--text-primary);
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:active,
+a:active {
+  transform: scale(0.98);
+}
+
+::selection {
+  background: var(--selection);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 3px;
+}
+
+.glass {
+  border: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
+  background: var(--glass);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  -webkit-backdrop-filter: blur(22px) saturate(155%);
+  backdrop-filter: blur(22px) saturate(155%);
+}
+
+.reader-page {
+  box-shadow: 0 24px 80px rgba(30, 38, 58, 0.12), 0 2px 12px rgba(30, 38, 58, 0.06);
+}
+
+.book-cover {
+  box-shadow: -8px 14px 30px rgba(27, 32, 43, 0.16), inset 5px 0 10px rgba(255, 255, 255, 0.10);
+}
+
+.book-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 8%;
+  background: linear-gradient(90deg, rgba(10, 15, 30, 0.22), rgba(255, 255, 255, 0.08), transparent);
+}
+
+.book-cover::after {
+  content: "";
+  position: absolute;
+  inset: auto 8% 6% 8%;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.cover-cobalt { background: linear-gradient(145deg, #173b75 0%, #2d6cc2 55%, #1e4b8e 100%); }
+.cover-red { background: linear-gradient(145deg, #7f2835 0%, #bd4153 55%, #6f1f2a 100%); }
+.cover-forest { background: linear-gradient(145deg, #244d43 0%, #367565 55%, #183b33 100%); }
+.cover-plum { background: linear-gradient(145deg, #4d355f 0%, #795393 55%, #382344 100%); }
+.cover-graphite { background: linear-gradient(145deg, #343944 0%, #5a6371 55%, #242831 100%); }
+
+.skeleton {
+  background: linear-gradient(100deg, var(--surface-muted) 30%, var(--surface-raised) 48%, var(--surface-muted) 66%);
+  background-size: 250% 100%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .skeleton { animation: shimmer 1.4s ease-in-out infinite; }
+}
+
+@keyframes shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--surface-raised);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
