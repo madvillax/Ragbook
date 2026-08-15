@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.vite/
+.env
+.DS_Store
+*.pyc
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.venv/
+uploads/
+*.db
+
