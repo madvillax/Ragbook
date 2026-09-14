@@ -8,7 +8,7 @@
     "build": "pnpm --dir web build",
     "typecheck": "pnpm --dir web typecheck",
     "lint": "pnpm --dir web lint",
-    "preview": "pnpm --dir web preview"
+    "start": "pnpm --dir web start"
   },
   "engines": {
     "node": ">=20"
