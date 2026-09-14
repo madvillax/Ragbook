@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import { Dialog } from "@base-ui/react/dialog";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FileArrowUp, FileText, X } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 import { uploadDocument } from "../lib/api";
@@ -12,32 +13,33 @@ const ACCEPTED = ".pdf,.docx,.pptx,.txt,.md,.markdown";
 export function UploadDialog() {
   const open = useAppStore((state) => state.isUploadOpen);
   const setOpen = useAppStore((state) => state.setUploadOpen);
-  const queryClient = useQueryClient();
+  const refreshLibrary = useAppStore((state) => state.refreshLibrary);
   const inputRef = useRef<HTMLInputElement>(null);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const reduceMotion = useReducedMotion();
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [uploadError, setUploadError] = useState<Error | null>(null);
+  const [isPending, setIsPending] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
 
-  const mutation = useMutation({
-    mutationFn: uploadDocument,
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["documents"] });
-      window.setTimeout(() => {
-        setOpen(false);
-        setFile(null);
-        mutation.reset();
-        if (inputRef.current) inputRef.current.value = "";
-      }, 350);
-    },
-  });
+  useEffect(() => () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  }, []);
+
+  function resetForm() {
+    setFile(null);
+    setError(null);
+    setUploadError(null);
+    setIsPending(false);
+    setIsSuccess(false);
+    if (inputRef.current) inputRef.current.value = "";
+  }
 
   function handleOpenChange(nextOpen: boolean) {
     setOpen(nextOpen);
-    if (!nextOpen && !mutation.isPending) {
-      setFile(null);
-      setError(null);
-      mutation.reset();
-      if (inputRef.current) inputRef.current.value = "";
+    if (!nextOpen && !isPending) {
+      resetForm();
     }
   }
 
@@ -49,6 +51,26 @@ export function UploadDialog() {
     }
     setError(null);
     setFile(nextFile);
+  }
+
+  async function handleUpload() {
+    if (!file || isPending) return;
+    setIsPending(true);
+    setUploadError(null);
+
+    try {
+      await uploadDocument(file);
+      setIsSuccess(true);
+      refreshLibrary();
+      closeTimer.current = setTimeout(() => {
+        setOpen(false);
+        resetForm();
+      }, 350);
+    } catch (uploadFailure) {
+      setUploadError(uploadFailure instanceof Error ? uploadFailure : new Error("The document could not be uploaded."));
+    } finally {
+      setIsPending(false);
+    }
   }
 
   return (
@@ -91,14 +113,14 @@ export function UploadDialog() {
           </motion.button>
           <input ref={inputRef} type="file" accept={ACCEPTED} className="sr-only" onChange={(event) => chooseFile(event.target.files?.[0])} />
 
-          {error || mutation.error ? (
-            <p role="alert" className="mt-3 text-sm text-red-600 dark:text-red-400">{error ?? mutation.error?.message}</p>
+          {error || uploadError ? (
+            <p role="alert" className="mt-3 text-sm text-red-600 dark:text-red-400">{error ?? uploadError?.message}</p>
           ) : null}
 
           <div className="mt-6 flex items-center justify-end gap-2">
             <Dialog.Close render={<Button variant="ghost" />}>Cancel</Dialog.Close>
-            <Button disabled={!file || mutation.isPending || mutation.isSuccess} onClick={() => file && mutation.mutate(file)}>
-              {mutation.isPending ? "Uploading..." : mutation.isSuccess ? "Added" : "Upload document"}
+            <Button disabled={!file || isPending || isSuccess} onClick={() => void handleUpload()}>
+              {isPending ? "Uploading..." : isSuccess ? "Added" : "Upload document"}
             </Button>
           </div>
         </Dialog.Popup>
