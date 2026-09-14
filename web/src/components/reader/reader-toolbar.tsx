@@ -1,4 +1,6 @@
-import { Link } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
 import { ArrowLeft, List, Minus, Plus, SidebarSimple, Sparkle } from "@phosphor-icons/react";
 import { Brand } from "../brand";
 import { useAppStore } from "../../store/app-store";
@@ -14,7 +16,7 @@ export function ReaderToolbar({ title, subtitle }: { title: string; subtitle: st
     <header className="glass fixed inset-x-0 top-0 z-30 flex h-16 items-center px-3 sm:px-4">
       <div className="flex min-w-0 flex-1 items-center gap-1 sm:gap-2">
         <Link
-          to="/"
+          href="/"
           aria-label="Back to library"
           className="grid size-9 shrink-0 place-items-center rounded-xl text-[var(--text-secondary)] hover:bg-[var(--surface-muted)] hover:text-[var(--text-primary)]"
         >

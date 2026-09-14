@@ -1,5 +1,6 @@
+"use client";
+
 import { useEffect, useRef, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
 import { ArrowUp, Check, Copy, Sparkle, X } from "@phosphor-icons/react";
 import { motion, useReducedMotion } from "motion/react";
 import { askDocument } from "../../lib/api";
@@ -20,10 +21,26 @@ export function AssistantPanel({ documentId, onCitation }: AssistantPanelProps) 
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
+  const [isPending, setIsPending] = useState(false);
+  const [requestError, setRequestError] = useState<Error | null>(null);
   const endRef = useRef<HTMLDivElement>(null);
-  const mutation = useMutation({
-    mutationFn: (question: string) => askDocument(documentId, question),
-    onSuccess: (response) => {
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+  }, [messages, isPending, reduceMotion]);
+
+  if (!open) return null;
+
+  async function ask(question: string) {
+    const trimmed = question.trim();
+    if (!trimmed || isPending) return;
+    setMessages((current) => [...current, { id: crypto.randomUUID(), role: "user", content: trimmed }]);
+    setInput("");
+    setIsPending(true);
+    setRequestError(null);
+
+    try {
+      const response = await askDocument(documentId, trimmed);
       setMessages((current) => [
         ...current,
         {
@@ -34,21 +51,11 @@ export function AssistantPanel({ documentId, onCitation }: AssistantPanelProps) 
           grounded: response.grounded,
         },
       ]);
-    },
-  });
-
-  useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
-  }, [messages, mutation.isPending, reduceMotion]);
-
-  if (!open) return null;
-
-  function ask(question: string) {
-    const trimmed = question.trim();
-    if (!trimmed || mutation.isPending) return;
-    setMessages((current) => [...current, { id: crypto.randomUUID(), role: "user", content: trimmed }]);
-    setInput("");
-    mutation.mutate(trimmed);
+    } catch (error) {
+      setRequestError(error instanceof Error ? error : new Error("RAGBOOK could not answer this question."));
+    } finally {
+      setIsPending(false);
+    }
   }
 
   async function copyAnswer(message: ChatMessage) {
@@ -109,7 +116,7 @@ export function AssistantPanel({ documentId, onCitation }: AssistantPanelProps) 
           </div>
         ))}
 
-        {mutation.isPending ? (
+        {isPending ? (
           <div className="mr-10 rounded-xl bg-[var(--surface-muted)] p-3" aria-label="RAGBOOK is searching the document">
             <div className="skeleton h-3 w-4/5 rounded" />
             <div className="skeleton mt-2 h-3 w-full rounded" />
@@ -117,7 +124,7 @@ export function AssistantPanel({ documentId, onCitation }: AssistantPanelProps) 
           </div>
         ) : null}
 
-        {mutation.isError ? <p role="alert" className="rounded-xl bg-red-500/8 p-3 text-xs leading-5 text-red-600 dark:text-red-400">{mutation.error.message}</p> : null}
+        {requestError ? <p role="alert" className="rounded-xl bg-red-500/8 p-3 text-xs leading-5 text-red-600 dark:text-red-400">{requestError.message}</p> : null}
 
         {messages.length === 0 ? (
           <div className="pt-1">
@@ -147,7 +154,7 @@ export function AssistantPanel({ documentId, onCitation }: AssistantPanelProps) 
             rows={2}
             className="max-h-28 min-h-10 flex-1 resize-none bg-transparent px-1.5 py-1 text-[13px] leading-5 text-[var(--text-primary)] outline-none placeholder:text-[var(--text-tertiary)]"
           />
-          <button disabled={!input.trim() || mutation.isPending} className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent-600 text-white disabled:opacity-40 dark:ring-1 dark:ring-white/15" aria-label="Send question"><ArrowUp size={16} weight="bold" /></button>
+          <button disabled={!input.trim() || isPending} className="grid size-9 shrink-0 place-items-center rounded-xl bg-accent-600 text-white disabled:opacity-40 dark:ring-1 dark:ring-white/15" aria-label="Send question"><ArrowUp size={16} weight="bold" /></button>
         </div>
         <p className="mt-2 text-center text-[9px] text-[var(--text-tertiary)]">Answers are limited to this document. Verify important details.</p>
       </form>

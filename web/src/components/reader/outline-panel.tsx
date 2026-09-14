@@ -1,3 +1,5 @@
+"use client";
+
 import { CaretRight, X } from "@phosphor-icons/react";
 import type { DocumentSection } from "../../lib/types";
 import { cn } from "../../lib/cn";

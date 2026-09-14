@@ -1,3 +1,5 @@
+"use client";
+
 import type { CSSProperties, ReactNode } from "react";
 import type { Citation, DocumentDetail, DocumentSection } from "../../lib/types";
 import { useAppStore } from "../../store/app-store";

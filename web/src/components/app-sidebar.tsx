@@ -1,4 +1,7 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { BookOpen, Plus } from "@phosphor-icons/react";
 import { Brand } from "./brand";
 import { useAppStore } from "../store/app-store";
@@ -6,7 +9,7 @@ import { cn } from "../lib/cn";
 
 export function AppSidebar() {
   const setUploadOpen = useAppStore((state) => state.setUploadOpen);
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const pathname = usePathname();
 
   return (
     <aside className="fixed inset-y-0 left-0 z-20 hidden w-60 flex-col border-r border-[var(--line)] bg-[var(--surface)] px-3 py-4 lg:flex">
@@ -21,7 +24,7 @@ export function AppSidebar() {
 
       <nav aria-label="Main navigation" className="mt-6 space-y-1">
         <Link
-          to="/"
+          href="/"
           className={cn(
             "flex h-10 items-center gap-3 rounded-xl px-3 text-sm transition-colors",
             pathname === "/"

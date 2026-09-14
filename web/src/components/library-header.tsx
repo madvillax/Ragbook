@@ -1,3 +1,5 @@
+"use client";
+
 import { MagnifyingGlass, Plus } from "@phosphor-icons/react";
 import { Brand } from "./brand";
 import { Button } from "./ui/button";

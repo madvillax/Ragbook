@@ -1,7 +1,5 @@
 import type { Book, ChatResponse, DocumentDetail } from "./types";
 
-const API_URL = (import.meta.env.VITE_API_URL || "http://localhost:8000").replace(/\/$/, "");
-
 interface DocumentDetailWire {
   id: string;
   title: string;
@@ -38,7 +36,10 @@ interface ChatResponseWire {
 }
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_URL}${path}`, init);
+  const response = await fetch(path, {
+    cache: "no-store",
+    ...init,
+  });
   if (!response.ok) {
     const payload = (await response.json().catch(() => null)) as { detail?: string } | null;
     throw new Error(payload?.detail ?? `Request failed with status ${response.status}.`);
@@ -46,12 +47,12 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-export async function listDocuments(): Promise<Book[]> {
-  return request<Book[]>("/api/v1/documents");
+export async function listDocuments(signal?: AbortSignal): Promise<Book[]> {
+  return request<Book[]>("/api/v1/documents", { signal });
 }
 
-export async function getDocument(documentId: string): Promise<DocumentDetail> {
-  const document = await request<DocumentDetailWire>(`/api/v1/documents/${documentId}`);
+export async function getDocument(documentId: string, signal?: AbortSignal): Promise<DocumentDetail> {
+  const document = await request<DocumentDetailWire>(`/api/v1/documents/${documentId}`, { signal });
   return {
     id: document.id,
     title: document.title,

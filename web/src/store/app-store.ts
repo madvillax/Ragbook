@@ -3,12 +3,14 @@ import { persist } from "zustand/middleware";
 
 interface AppState {
   isUploadOpen: boolean;
+  libraryRevision: number;
   query: string;
   activeCategory: string;
   readerFontScale: number;
   isOutlineOpen: boolean;
   isAssistantOpen: boolean;
   setUploadOpen: (open: boolean) => void;
+  refreshLibrary: () => void;
   setQuery: (query: string) => void;
   setActiveCategory: (category: string) => void;
   setReaderFontScale: (scale: number) => void;
@@ -20,12 +22,14 @@ export const useAppStore = create<AppState>()(
   persist(
     (set) => ({
       isUploadOpen: false,
+      libraryRevision: 0,
       query: "",
       activeCategory: "All documents",
       readerFontScale: 1,
       isOutlineOpen: true,
       isAssistantOpen: true,
       setUploadOpen: (isUploadOpen) => set({ isUploadOpen }),
+      refreshLibrary: () => set((state) => ({ libraryRevision: state.libraryRevision + 1 })),
       setQuery: (query) => set({ query }),
       setActiveCategory: (activeCategory) => set({ activeCategory }),
       setReaderFontScale: (readerFontScale) => set({ readerFontScale }),
