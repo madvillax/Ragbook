@@ -1,6 +1,9 @@
 node_modules/
 dist/
 .vite/
+.next/
+.env.local
+*.tsbuildinfo
 .env
 .DS_Store
 *.pyc
@@ -10,4 +13,3 @@ __pycache__/
 .venv/
 uploads/
 *.db
-
