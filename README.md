@@ -4,7 +4,7 @@ RAGBOOK converts source documents into a structured, ebook-style reader and keep
 
 ## What is included
 
-- React 19, TypeScript, Vite, TanStack Router, TanStack Query, Zustand, Tailwind CSS 4, Base UI, and Motion
+- Next.js 16 App Router, React 19, TypeScript, Zustand, Tailwind CSS 4, Base UI, and Motion
 - A responsive document library with search, filtering, upload, processing, empty, loading, and error states
 - A focused reader with an outline, typography controls, grounded chat, source citations, and exact passage jumps
 - FastAPI, Pydantic, async SQLAlchemy, Alembic, PostgreSQL full-text search, and pgvector-ready storage
@@ -20,7 +20,15 @@ pnpm install
 pnpm dev
 ```
 
-The frontend connects to `http://localhost:8000` by default and displays only documents returned by the RAGBOOK API. Set `VITE_API_URL` when the backend is hosted elsewhere.
+Open `http://localhost:3000`. Next.js proxies `/api/*` to `http://localhost:8000` by default, so the browser uses a same-origin API connection and displays only documents returned by FastAPI.
+
+For a different backend origin:
+
+```bash
+cp web/.env.example web/.env.local
+```
+
+Set `API_URL` in `web/.env.local`. It is a server-side Next.js variable and is not exposed to browser JavaScript.
 
 ## Start the API
 
@@ -60,7 +68,7 @@ For DOCX, PPTX, LlamaIndex, and Gemini adapters:
 uv sync --dev --extra ingestion --extra rag
 ```
 
-Set `VITE_API_URL=http://localhost:8000` to connect the frontend to the API. To enable the complete embedding, reranking, and LLM path, set `RAG_MODE=hybrid`, add a server-side `GEMINI_API_KEY`, and install the `rag` extra. Create the Gemini key in [Google AI Studio](https://aistudio.google.com/app/apikey); PostgreSQL itself does not need an API key. The default `fts` mode remains deterministic and requires no external AI provider.
+To enable the complete embedding, reranking, and LLM path, set `RAG_MODE=hybrid`, add a server-side `GEMINI_API_KEY`, and install the `rag` extra. Create the Gemini key in [Google AI Studio](https://aistudio.google.com/app/apikey); PostgreSQL itself does not need an API key. The default `fts` mode remains deterministic and requires no external AI provider.
 
 ## Architecture
 
