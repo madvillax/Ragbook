@@ -1,6 +1,6 @@
 # RAGBOOK
 
-RAGBOOK converts source documents into a structured, ebook-style reader and keeps every AI answer connected to its supporting passage.
+RAGBOOK converts source documents into a structured, ebook-style reader and keeps every AI answer connected to its supporting 
 
 ## What is included
 
